@@ -1,6 +1,6 @@
 import conexao from "../config/db.js";
 
-export async function listarUsuarios(){
+export async function listarUsuariosDB(){
     const conn = await conexao.getConnection();
 
     try{
@@ -12,23 +12,37 @@ export async function listarUsuarios(){
     }
 }
 
-export async function atualizarUsuario(id){
+export async function criarUsuarioDB(){
     const conn = await conexao.getConnection();
 
     try{
-        await conn.query("UPDATE nome = ?, email = ?, perfil = ? WHERE id = ?", [nome, email, perfil, id]);
+        const [resultado] = await conn.query("INSERT INTO usuarios(nome, email, perfil, senha) VALUES (?, ?, ?, ?)", [nome, email, perfil, senhaCriptografada]);
+        
+        return resultado;
+
+    }finally{
+        conn.release()
+    }
+}
+
+export async function atualizarUsuarioDB(id, nome, email, perfil){
+    const conn = await conexao.getConnection();
+
+    try{
+        await conn.query("UPDATE usuarios SET nome = ?, email = ?, perfil = ? WHERE id = ?", [nome, email, perfil, id]);
     } finally{
         conn.release();
     }
 }
 
-export async function deletarUsuario(id){
+export async function deletarUsuarioDB(id){
     const conn = await conexao.getConnection();
 
     try{
-        const resultado = await conn.query("DELETE FROM usuarios WHERE di = ?", [id]);
+        const [resultado] = await conn.query("DELETE FROM usuarios WHERE id = ?", [id]);
 
         return resultado;
+
     }finally{
         conn.release();
     }

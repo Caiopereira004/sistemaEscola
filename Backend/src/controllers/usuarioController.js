@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
-import { listarUsuarios } from "../models/usuarioModel.js";
+import { listarUsuariosDB, criarUsuarioDB, atualizarUsuarioDB, deletarUsuarioDB } from "../models/usuarioModel.js";
 
 export const listarUsuarios = async (req,res) =>{
 
     try{
-        const usuarios = await listarUsuarios();
+        const usuarios = await listarUsuariosDB();
             res.json(usuarios);
 
     } catch (error){
@@ -12,4 +12,62 @@ export const listarUsuarios = async (req,res) =>{
     }
 };
 
-export const
+export const criarUsuario = async (req,res) =>{
+    const {nome, email, perfil, senha} = req.body;
+
+    try{
+    if(!nome || !email || !senha){
+        return res.status(400).json({msg: "Nome, email e senha são obrigatórios"})
+    }
+
+    const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+    await criarUsuarioDB ({nome, email, perfil: perfil || "admin", senha: senhaCriptografada})
+
+    return res.status(201).json("Usuário criado com sucesso!")
+}catch{
+    return res.status(500).json({msg: "Erro ao criar", 
+    erro: error.message
+    });
+    }
+};
+
+export const atualizarUsuario = async (req,res) =>{
+    
+    const {id} = req.params;
+    const {nome, email, perfil} = req.body;
+
+    try{
+    if(!nome || !email || !perfil){
+        return res.status(400).json({msg: "Nome, email e perfil são obrigatórios!"});
+    }
+
+        await atualizarUsuario.atualizarUsuarioDB(id, nome, email, perfil);
+    
+        return res.status(201).json({msg: "Usuário atualizado com sucesso!"});
+    } catch(error){
+        console.log(error);
+
+        return res.status(500).json({msg: "Erro ao atualizar usuário!"});
+    }
+}
+
+export const deletarUsuario = async (req,res) =>{
+
+    try{
+        const { id } = req.params;
+
+        const resultado = await atualizarUsuario.atualizarUsuarioDB(id);
+
+        if(resultado.affectedRows === 0){
+        return res.status(400).json({msg: "Usuário não encontrado!"});
+    }
+
+    return res.status(201).json({msg:"Usuário deletado!"});
+
+} catch(error){
+    console.log(error);
+
+    return res.status(500).json({msg: "Erro ao deletar usuário!"});
+}
+}

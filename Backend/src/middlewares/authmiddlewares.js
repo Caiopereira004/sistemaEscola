@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { jwtConfig } from "../config/jwt.js";
 
 export const verificarToken = (req,res)=>{
-    const authHeader = req.headers.authorization;
+    const authReader = req.headers.authorization;
 
     if(!authReader){
         return res.status(401).json({msg:"Token não identificado!"});

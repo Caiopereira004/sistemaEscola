@@ -44,3 +44,19 @@ export const atualizarProfessor = async (req, res) =>{
         return res.status(500).json({msg: "Erro ao atualizar professor(a)"});
     }
 }
+
+export const deletarProfessor = async (req,res) =>{
+    try{
+    const {id} = req.params;
+
+    const resultado = await deletarProfessor.deletarProfessorDB(id);
+
+    if(resultado.affectedRows === 0){
+        return res.status(404).json({msg: "Usuário não encontrado!"});
+    }
+    res.status(201).json({msg:"Usuário deletado com sucesso!"});
+    
+    }catch(error){
+        return res.status(500).json({msg: "Erro ao deletar usuário!"});
+    }
+}

@@ -25,10 +25,8 @@ export const criarUsuario = async (req,res) =>{
     await criarUsuarioDB ({nome, email, perfil: perfil || "admin", senha: senhaCriptografada})
 
     return res.status(201).json("Usuário criado com sucesso!")
-}catch{
-    return res.status(500).json({msg: "Erro ao criar", 
-    erro: error.message
-    });
+}catch(error){
+    return res.status(500).json({msg: "Erro ao criar", erro: error.message});
     }
 };
 
@@ -45,10 +43,9 @@ export const atualizarUsuario = async (req,res) =>{
         await atualizarUsuario.atualizarUsuarioDB(id, nome, email, perfil);
     
         return res.status(201).json({msg: "Usuário atualizado com sucesso!"});
+        
     } catch(error){
-        console.log(error);
-
-        return res.status(500).json({msg: "Erro ao atualizar usuário!"});
+        return res.status(500).json({msg: "Erro ao atualizar usuário!", erro: error.message});
     }
 }
 
@@ -67,7 +64,6 @@ export const deletarUsuario = async (req,res) =>{
 
 } catch(error){
     console.log(error);
-
-    return res.status(500).json({msg: "Erro ao deletar usuário!"});
+    return res.status(500).json({msg: "Erro ao deletar usuário!", erro: error.message});
 }
 }
